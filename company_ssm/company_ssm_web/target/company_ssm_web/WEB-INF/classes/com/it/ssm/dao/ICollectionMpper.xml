@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.it.ssm.dao.ICollectionDao">
+    <resultMap id="BaseResultMap" type="com.it.ssm.domain.Collection">
+        <result column="id" jdbcType="INTEGER" property="id"/>
+        <result column="userID" jdbcType="INTEGER" property="userID"/>
+        <result column="companyID" jdbcType="INTEGER" property="companyID"/>
+
+        <association property="company" javaType="com.it.ssm.domain.Company">
+            <id column="id" property="id"/>
+            <result column="companyid" property="companyID"/>
+            <result column="name" property="name"/>
+            <result column="type" property="type"/>
+            <result column="address" property="address"/>
+            <result column="phoneNumber" property="phoneNumber"/>
+            <result column="popularity" property="popularity"/>
+        </association>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+      id,userID,companyID
+    </sql>
+
+    <select id="getByID" resultMap="BaseResultMap" parameterType="com.it.ssm.domain.Collection">
+        SELECT
+        h.ID as ID,
+        c.companyid as companyID,
+        c.name as name,
+        c.type as type,
+        c.address as address,
+        c.phoneNumber as phoneNumber,
+        c.popularity as popularity
+        from collection h
+        left join company c on h.companyID = c.id
+        where userID = #{userID}
+    </select>
+
+    <select id="selectFuzzy" parameterType="com.it.ssm.domain.Collection" resultMap="BaseResultMap">
+        SELECT
+        h.ID as ID,
+        c.companyid as companyID,
+        c.name as name,
+        c.type as type,
+        c.address as address,
+        c.phoneNumber as phoneNumber,
+        c.popularity as popularity
+        from collection h
+        left join company c on h.companyID = c.id
+        left join user u on h.userID = u.id
+        <where>
+            <if test="keyWords !=null and keyWords !=''">
+                concat (h.ID,name,address,type) like "%"#{keyWords}"%"
+            </if>
+            <if test="type != null and type !=''">
+                and type = #{type}
+            </if>
+            <if test="userID!=null and userID!=''">
+                and userID=#{userID}
+            </if>
+        </where>
+    </select>
+
+    <insert id="insertCollection" parameterType="com.it.ssm.domain.Collection">
+        insert into collection
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userID != null and userID!=''">
+                userID,
+            </if>
+            <if test="companyID != null and companyID!=''">
+                companyID,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userID != null and userID!=''">
+                #{userID},
+            </if>
+            <if test="companyID != null and companyID!=''">
+                #{companyID},
+            </if>
+        </trim>
+    </insert>
+
+    <select id="selectUserID" parameterType="com.it.ssm.domain.Collection" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from collection
+        <where>
+         userid = #{userID}
+         and companyid=#{companyID}
+        </where>
+    </select>
+
+
+    <!--    删除企业档案 -->
+    <delete id="deleteByID" parameterType="java.lang.Integer">
+        delete from collection where id = #{id}
+    </delete>
+    <!-- 批量删除用户 -->
+    <delete id="deleteList">
+        delete from collection where id in
+        <foreach collection="array" item="ids" open="(" separator=","
+                 close=")">
+            #{ids}
+        </foreach>
+    </delete>
+</mapper>

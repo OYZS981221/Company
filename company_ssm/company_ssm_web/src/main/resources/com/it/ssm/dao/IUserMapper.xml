@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.it.ssm.dao.IUserDao">
+    <resultMap id="BaseResultMap" type="com.it.ssm.domain.User">
+        <result column="id" jdbcType="INTEGER" property="id"/>
+        <result column="username" jdbcType="VARCHAR" property="userName"/>
+        <result column="password" jdbcType="VARCHAR" property="passWord"/>
+        <result column="sex" jdbcType="VARCHAR" property="sex"/>
+        <result column="birth" jdbcType="DATE" property="birth"/>
+        <result column="phonenumber" jdbcType="VARCHAR" property="phoneNumber"/>
+        <result column="email" jdbcType="VARCHAR" property="email"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+      id,username,password,sex,birth,phonenumber,email
+    </sql>
+
+<!--    登录操作（查询用户）-->
+    <select id="queryUser" parameterType="com.it.ssm.domain.User" resultType="com.it.ssm.domain.User">
+        select
+        <include refid="Base_Column_List"/>
+        from user where username = #{userName} and password = #{passWord}
+    </select>
+
+
+<!--    注册操作（插入用户）-->
+    <insert id="regist" parameterType="com.it.ssm.domain.User">
+     insert into user (username,password,sex,birth,phonenumber,email)
+    values (#{userName},#{passWord},#{sex},#{birth},#{phoneNumber},#{email})
+  </insert>
+
+<!--    注销用户（删除用户）-->
+    <delete id="deleteUserByID" parameterType="java.lang.Integer">
+        delete from user where id = #{id}
+    </delete>
+
+
+    <!--    查询用户信息(All)-->
+    <select id="selectAll" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"/> from user
+    </select>
+
+
+    <!--    查询用户信息(ID)-->
+    <select id="queryUserByID" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"/> from user where id = #{id}
+    </select>
+
+    <!--    查询用户信息(Name)-->
+    <select id="selectUserByName"  parameterType="com.it.ssm.domain.User" resultType="com.it.ssm.domain.User">
+        select <include refid="Base_Column_List"/> from user
+        <where>
+            <if test="userName !='' and userName !=null">
+                username = #{userName}
+            </if>
+        </where>
+    </select>
+
+    <!--    查询用户信息(Name)-->
+    <select id="queryUserByName"  resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"/> from user
+        <where>
+        <if test="userName !='' and userName !=null">
+           username = #{userName}
+        </if>
+        </where>
+    </select>
+
+    <!--    模糊查询（姓名，性别，电话号码，email）-->
+    <select id="queryUserX" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"/> from user
+        <where>
+            <if test="keyWords !=null and keyWords !=''">
+                concat (username,sex,phonenumber,email) like "%"#{keyWords}"%"
+            </if>
+            <if test="sex !='' and sex != null">
+                and sex = #{sex}
+            </if>
+        </where>
+    </select>
+
+
+
+    <!--    更新用户信息-->
+    <update id="updateUser" parameterType="com.it.ssm.domain.User">
+        update user
+        <set>
+            <if test="userName != null and userName!=''">
+                username =#{userName},
+            </if>
+            <if test="passWord != null and passWord!=''">
+                password=#{passWord},
+            </if>
+            <if test="sex != null and sex!=''">
+                sex =#{sex},
+            </if>
+            <if test="birth != null">
+                birth=#{birth},
+            </if>
+            <if test="phoneNumber != null and phoneNumber!=''">
+                phonenumber=#{phoneNumber},
+            </if>
+            <if test="email != null and email!=''">
+                email=#{email}
+            </if>
+        </set>
+        where id=#{id}
+    </update>
+
+    <!-- 批量删除用户 -->
+    <delete id="deleteList">
+        delete from user where id in
+        <foreach collection="array" item="ids" open="(" separator=","
+                 close=")">
+            #{ids}
+        </foreach>
+    </delete>
+
+
+
+</mapper>

@@ -1,0 +1,8 @@
+com\it\ssm\dao\IAdminDao.class
+com\it\ssm\dao\ICompanyDao.class
+com\it\ssm\dao\IUserDao.class
+com\it\ssm\dao\IHistoryDao.class
+com\it\ssm\dao\ICommentDao.class
+com\it\ssm\dao\INewsDao.class
+com\it\ssm\dao\ICollectionDao.class
+com\it\ssm\dao\ILogDao.class

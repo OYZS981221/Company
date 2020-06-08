@@ -1,0 +1,349 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.it.ssm.dao.ICompanyDao">
+    <resultMap id="BaseResultMap" type="com.it.ssm.domain.Company">
+        <result column="id" jdbcType="INTEGER" property="id"/>
+        <result column="companyid" jdbcType="VARCHAR" property="companyID"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="boss" jdbcType="VARCHAR" property="boss"/>
+        <result column="assets" jdbcType="VARCHAR" property="assets"/>
+        <result column="time" jdbcType="DATE" property="time"/>
+        <result column="type" jdbcType="VARCHAR" property="type"/>
+        <result column="introduction" jdbcType="VARCHAR" property="introduction"/>
+        <result column="phonenumber" jdbcType="VARCHAR" property="phoneNumber"/>
+        <result column="email" jdbcType="VARCHAR" property="email"/>
+        <result column="province" jdbcType="VARCHAR" property="province"/>
+        <result column="city" jdbcType="VARCHAR" property="city"/>
+        <result column="district" jdbcType="VARCHAR" property="district"/>
+        <result column="address" jdbcType="VARCHAR" property="address"/>
+        <result column="action" jdbcType="VARCHAR" property="action"/>
+        <result column="popularity" jdbcType="VARCHAR" property="popularity"/>
+        <result column="internet" jdbcType="VARCHAR" property="internet"/>
+        <result column="indeximg" jdbcType="VARCHAR" property="indeximg"/>
+        <result column="addressimg" jdbcType="VARCHAR" property="addressimg"/>
+        <result column="otherimgF" jdbcType="VARCHAR" property="otherimgF"/>
+        <result column="otherimgT" jdbcType="VARCHAR" property="otherimgT"/>
+        <result column="otherimgS" jdbcType="VARCHAR" property="otherimgS"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+      id,companyid,name,boss,assets,time,type,introduction,phonenumber,email,
+      province,city,district,address,indeximg,internet,popularity
+    </sql>
+    <sql id="All_Column_List">
+      id,companyid,name,boss,assets,time,type,introduction,phonenumber,email,province,city,
+      district,address,action,internet,indeximg,otherimgF,otherimgT,otherimgS,addressimg,popularity
+    </sql>
+    <!--    查询热度排名前四条-->
+    <select id="selectCompanyHot" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from company order by popularity desc limit 6
+    </select>
+
+    <select id="selectByType" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from company where type = #{type}
+    </select>
+
+    <!--    查询全部基本信息-->
+    <select id="selectAll" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from company
+    </select>
+
+    <!--    通过ID查询企业信息-->
+    <select id="queryCompanyByID" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from company where id = #{id}
+    </select>
+
+    <!--    通过ID查询企业具体信息-->
+    <select id="queryCompanyByIDA" resultMap="BaseResultMap">
+        select
+        <include refid="All_Column_List"/>
+        from company where id = #{id}
+    </select>
+
+    <!--    模糊查询（通过公司名或地址-->
+    <select id="queryCompanyX" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from company
+        <where>
+            <if test="keyWords !=null and keyWords !=''">
+                concat (name,address,type) like "%"#{keyWords}"%"
+            </if>
+        </where>
+    </select>
+
+    <!--    多条件拼接查询-->
+    <select id="queryCompanyM" parameterType="com.it.ssm.domain.Company" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from company
+        <where>
+            <if test="name !=null and name !=''">
+                and name like "%"#{name}"%"
+            </if>
+            <if test="type!=null and type!='' ">
+                and type=#{type}
+            </if>
+            <if test="address!=null and address!=''">
+                and address=#{address}
+            </if>
+        </where>
+    </select>
+
+    <!--    多条件拼接查询-->
+    <select id="selectFuzzy" parameterType="com.it.ssm.domain.Company" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"/> from company
+        <where>
+            <if test="keyWords !='' and keyWords !=null">
+                concat (name,boss,assets,type,introduction,province,city,district,
+                address,action) like "%"#{keyWords}"%"
+            </if>
+            <if test="type !='' and type != null">
+                and type = #{type}
+            </if>
+            <if test="province !='' and province != null">
+                and province = #{province}
+            </if>
+            <if test="city !='' and city != null">
+                and city = #{city}
+            </if>
+            <if test="district !='' and district != null">
+                and district = #{district}
+            </if>
+            <if test="boss !='' and boss != null">
+                and boss = #{boss}
+            </if>
+            <if test="beginTime != null and beginTime !=''
+            and endTime != null and endTime !=''">
+                and time between #{beginTime} and #{endTime}
+            </if>
+        </where>
+    </select>
+    <!--    增加企业档案 -->
+    <insert id="addCompany" parameterType="com.it.ssm.domain.Company">
+        insert into company
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="companyID != null and companyID!=''">
+                companyid,
+            </if>
+            <if test="name != null and name!=''">
+                name,
+            </if>
+            <if test="boss != null and boss!=''">
+                boss,
+            </if>
+            <if test="assets != null and assets!=''">
+                assets,
+            </if>
+            <if test="time != null">
+                time,
+            </if>
+            <if test="type != null and type!=''">
+                type,
+            </if>
+            <if test="introduction != null and introduction!=''">
+                introduction,
+            </if>
+            <if test="action != null and action!=''">
+                action,
+            </if>
+            <if test="email != null and email!=''">
+                email,
+            </if>
+            <if test="phoneNumber != null and phoneNumber!=''">
+                phonenumber,
+            </if>
+            <if test="province != null and province!=''">
+                province,
+            </if>
+            <if test="city != null and city!=''">
+                city,
+            </if>
+            <if test="district != null and district!=''">
+                district,
+            </if>
+            <if test="address != null and address!=''">
+                address,
+            </if>
+            <if test="popularity != null and popularity!=''">
+                popularity,
+            </if>
+            <if test="internet != null and internet!=''">
+                internet,
+            </if>
+            <if test="indeximg != null and indeximg!=''">
+                indeximg,
+            </if>
+            <if test="otherimgF != null and otherimgF!=''">
+                otherimgF,
+            </if>
+            <if test="otherimgS != null and otherimgS!=''">
+                otherimgS,
+            </if>
+            <if test="otherimgT != null and otherimgT!=''">
+                otherimgT,
+            </if>
+            <if test="addressimg != null and addressimg!=''">
+                addressimg,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="companyID != null and companyID!=''">
+                #{companyID},
+            </if>
+            <if test="name != null and name!=''">
+                #{name},
+            </if>
+            <if test="boss != null and boss!=''">
+                #{boss},
+            </if>
+            <if test="assets != null and assets!=''">
+                #{assets},
+            </if>
+            <if test="time != null">
+                #{time},
+            </if>
+            <if test="type != null and type!=''">
+                #{type},
+            </if>
+            <if test="introduction != null and introduction!=''">
+                #{introduction},
+            </if>
+            <if test="action != null and action!=''">
+                #{action},
+            </if>
+            <if test="email != null and email!=''">
+                #{email},
+            </if>
+            <if test="phoneNumber != null and phoneNumber!=''">
+                #{phoneNumber},
+            </if>
+            <if test="province != null and province!=''">
+                #{province},
+            </if>
+            <if test="city != null and city!=''">
+                #{city},
+            </if>
+            <if test="district != null and district!=''">
+                #{district},
+            </if>
+            <if test="address != null and address!=''">
+                #{address},
+            </if>
+            <if test="popularity != null and popularity!=''">
+                #{popularity},
+            </if>
+            <if test="internet != null and internet!=''">
+                #{internet},
+            </if>
+            <if test="indeximg != null and indeximg!=''">
+                #{indeximg},
+            </if>
+            <if test="otherimgF != null and otherimgF!=''">
+                #{otherimgF},
+            </if>
+            <if test="otherimgS != null and otherimgS!=''">
+                #{otherimgS},
+            </if>
+            <if test="otherimgT != null and otherimgT!=''">
+                #{otherimgT},
+            </if>
+            <if test="addressimg != null and addressimg!=''">
+                #{addressimg},
+            </if>
+        </trim>
+    </insert>
+
+    <!--    删除企业档案 -->
+    <delete id="deleteByID" parameterType="java.lang.Integer">
+        delete from company where id = #{id}
+    </delete>
+    <!-- 批量删除用户 -->
+    <delete id="deleteList">
+        delete from company where id in
+        <foreach collection="array" item="ids" open="(" separator=","
+                 close=")">
+            #{ids}
+        </foreach>
+    </delete>
+
+    <!--    更新企业档案-->
+    <update id="updateCompany" parameterType="com.it.ssm.domain.Company">
+        update company
+        <set>
+            <if test="companyID != null and name !=''">
+                companyid =#{companyID},
+            </if>
+            <if test="name != null and name !=''">
+                name =#{name},
+            </if>
+            <if test="boss != null and name !=''">
+                boss =#{boss},
+            </if>
+            <if test="assets != null and name !=''">
+                assets=#{assets},
+            </if>
+            <if test="time != null">
+                time =#{time},
+            </if>
+            <if test="type != null and type !=''">
+                type =#{type},
+            </if>
+            <if test="introduction != null and introduction !=''">
+                introduction=#{introduction},
+            </if>
+            <if test="phoneNumber != null and phoneNumber !=''">
+                phonenumber =#{phoneNumber},
+            </if>
+            <if test="email != null and email !=''">
+                email =  #{email},
+            </if>
+            <if test="internet != null and internet !=''">
+                internet =  #{internet},
+            </if>
+            <if test="action != null and action !=''">
+                action =  #{action},
+            </if>
+            <if test="province != null and province!=''">
+                province = #{province},
+            </if>
+            <if test="city != null and city!=''">
+                city = #{city},
+            </if>
+            <if test="district != null and district!=''">
+                district = #{district},
+            </if>
+            <if test="address != null and address !=''">
+                address = #{address},
+            </if>
+            <if test="popularity != null and popularity !=''">
+                popularity = #{popularity},
+            </if>
+            <if test="indeximg != null and indeximg !=''">
+                indeximg = #{indeximg},
+            </if>
+            <if test="otherimgF != null and otherimgF !=''">
+                otherimgF = #{otherimgF},
+            </if>
+            <if test="otherimgS != null and otherimgS !=''">
+                otherimgS = #{otherimgS},
+            </if>
+            <if test="otherimgT != null and otherimgT !=''">
+                otherimgT = #{otherimgT},
+            </if>
+            <if test="addressimg != null and addressimg !=''">
+                addressimg = #{addressimg}
+            </if>
+        </set>
+        where id=#{id}
+    </update>
+</mapper>

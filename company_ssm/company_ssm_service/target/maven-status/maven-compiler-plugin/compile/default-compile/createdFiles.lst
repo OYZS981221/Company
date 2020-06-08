@@ -1,0 +1,16 @@
+com\it\ssm\service\IHistoryService.class
+com\it\ssm\service\ILogService.class
+com\it\ssm\service\ICommentService.class
+com\it\ssm\service\IAdminService.class
+com\it\ssm\service\impl\LogServiceImpl.class
+com\it\ssm\service\impl\CollectionServiceImpl.class
+com\it\ssm\service\impl\NewsServiceImpl.class
+com\it\ssm\service\impl\AdminServiceImpl.class
+com\it\ssm\service\impl\CompanyServiceImpl.class
+com\it\ssm\service\impl\HistoryServiceImpl.class
+com\it\ssm\service\INewsService.class
+com\it\ssm\service\impl\UserServiceImpl.class
+com\it\ssm\service\impl\CommentServiceImpl.class
+com\it\ssm\service\ICollectionService.class
+com\it\ssm\service\ICompanyService.class
+com\it\ssm\service\IUserService.class

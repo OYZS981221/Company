@@ -1,0 +1,9 @@
+com\it\ssm\domain\Collection.class
+com\it\ssm\domain\Comment.class
+com\it\ssm\domain\Cart.class
+com\it\ssm\domain\User.class
+com\it\ssm\domain\Admin.class
+com\it\ssm\domain\History.class
+com\it\ssm\domain\Log.class
+com\it\ssm\domain\News.class
+com\it\ssm\domain\Company.class

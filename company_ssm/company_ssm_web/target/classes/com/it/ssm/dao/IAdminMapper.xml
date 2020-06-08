@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.it.ssm.dao.IAdminDao">
+    <resultMap id="BaseResultMap" type="com.it.ssm.domain.Admin">
+        <result column="id" jdbcType="INTEGER" property="id"/>
+        <result column="username" jdbcType="VARCHAR" property="userName"/>
+        <result column="password" jdbcType="VARCHAR" property="passWord"/>
+    </resultMap>
+
+    <!--    登录操作（查询用户）-->
+    <select id="queryAdmin" resultType="com.it.ssm.domain.Admin">
+        select * from admin where username = #{userName} and password = #{passWord}
+    </select>
+</mapper>

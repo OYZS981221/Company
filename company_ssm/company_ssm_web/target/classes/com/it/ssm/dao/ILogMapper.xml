@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.it.ssm.dao.ILogDao">
+    <resultMap id="BaseResultMap" type="com.it.ssm.domain.Log">
+        <result column="id" jdbcType="INTEGER" property="id"/>
+        <result column="userid" jdbcType="INTEGER" property="userid"/>
+        <result column="ip" jdbcType="VARCHAR" property="ip"/>
+        <result column="time" jdbcType="TIMESTAMP" property="time"/>
+        <result column="address" jdbcType="VARCHAR" property="address"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+      id,userid,ip,time,address
+    </sql>
+
+    <select id="selectFuzzy" parameterType="com.it.ssm.domain.Log" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from log
+        <where>
+            <if test="beginTime != null and beginTime !=''
+            and endTime != null and endTime !=''">
+                and time between #{beginTime} and #{endTime}
+            </if>
+            <if test="userid!=null and userid!=''">
+                and userid=#{userid}
+            </if>
+        </where>
+    </select>
+    <select id="selectLog" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from log where userid = #{userid}
+    </select>
+
+    <insert id="insertLog" parameterType="com.it.ssm.domain.Log">
+    insert into log
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+    <if test="userid != null and userid!=''">
+        userid,
+    </if>
+    <if test="ip != null and ip!=''">
+        ip,
+    </if>
+    <if test="time != null">
+        time,
+    </if>
+    <if test="address != null and address!=''">
+        address,
+    </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+        <if test="userid != null and userid!=''">
+            #{userid},
+        </if>
+        <if test="ip != null and ip!=''">
+            #{ip},
+        </if>
+        <if test="time != null">
+            #{time},
+        </if>
+        <if test="address != null and address!=''">
+            #{address},
+        </if>
+
+    </trim>
+    </insert>
+
+    <!--    删除企业档案 -->
+    <delete id="deleteByID" parameterType="java.lang.Integer">
+        delete from log where id = #{id}
+    </delete>
+    <!-- 批量删除用户 -->
+    <delete id="deleteList">
+        delete from log where id in
+        <foreach collection="array" item="ids" open="(" separator=","
+                 close=")">
+            #{ids}
+        </foreach>
+    </delete>
+
+</mapper>

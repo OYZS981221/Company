@@ -1,0 +1,10 @@
+com\it\ssm\controller\CollectionController.class
+com\it\ssm\controller\UploadUtil.class
+com\it\ssm\controller\NewsController.class
+com\it\ssm\controller\AdminController.class
+com\it\ssm\controller\CompanyController.class
+com\it\ssm\controller\LogController.class
+com\it\ssm\controller\UserController.class
+com\it\ssm\controller\HistoryController.class
+com\it\ssm\controller\SaveFile.class
+com\it\ssm\controller\CommentController.class
